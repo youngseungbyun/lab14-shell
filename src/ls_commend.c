@@ -4,22 +4,24 @@
 #include <dirent.h>
 #include <sys/types.h>
 
-void my_ls(void){
+void my_ls(void) {
     DIR *dir;
     struct dirent *entry;
 
+    // Open the current directory
     dir = opendir(".");
-    if(dir == NULL){
+    if (dir == NULL) {
         perror("opendir");
         return;
-    } else {
-        while((entry = reddir(dir)) != NULL){
-            if(entry->d_type == DT_DIR){
-                printf("%s/\n", entry->d_name);
-            } else {
-                printf("%s\n", entry->d_name);
-            }
+    } 
+    
+    // Read and print each entry in the directory
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_DIR) {
+            printf("%s/\n", entry->d_name); // Append '/' to directories
+        } else {
+            printf("%s\n", entry->d_name); // Print files normally
         }
     }
-    closedir(dir);
+    closedir(dir); // Close the directory
 }
