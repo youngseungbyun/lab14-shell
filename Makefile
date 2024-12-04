@@ -3,11 +3,12 @@ SRC_DIR = $(PROJ_DIR)/src
 INC_DIR = $(PROJ_DIR)/include
 OBJ_DIR = $(PROJ_DIR)/obj
 BIN_DIR = $(PROJ_DIR)/bin
+HEADERS = $(INC_DIR)/ls_commend.h $(INC_DIR)/cat_commend.h
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	gcc -c -o $@ $^ -I$(INC_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(OBJ_DIR)
+	gcc -c -o $@ $< -I$(INC_DIR)
 
-$(BIN_DIR)/myshell: $(OBJ_DIR)/myshell.o $(OBJ_DIR)/ls_commend.o | $(BIN_DIR)
+$(BIN_DIR)/myshell: $(OBJ_DIR)/myshell.o $(OBJ_DIR)/ls_commend.o $(OBJ_DIR)/cat_commend.o | $(BIN_DIR)
 	gcc -o $@ $^ -I$(INC_DIR)
 
 $(BIN_DIR):

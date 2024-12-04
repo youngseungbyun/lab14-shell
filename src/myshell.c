@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "ls_commend.h"
+#include "cat_commend.h" // cat 명령어 헤더 파일 추가
 
 #define MAX_LINE 80
 #define MAX_ARGS 10
@@ -15,16 +16,23 @@ int main() {
     while (1) {
         // Print the prompt
         printf("myshell> ");
+        fflush(stdout);
 
         // Read the input from the user
         if (fgets(input, MAX_LINE, stdin) == NULL) {
             continue; // Handle EOF gracefully
         }
 
+        // Remove the newline character from the input
+        size_t len = strlen(input);
+        if (len > 0 && input[len - 1] == '\n') {
+            input[len - 1] = '\0';
+        }
+
         // Tokenize the input
         token = strtok(input, " \n\t");
         int i = 0;
-        while (token != NULL) {
+        while (token != NULL && i < MAX_ARGS - 1) {
             argv[i++] = token;
             token = strtok(NULL, " \n\t");
         }
@@ -34,22 +42,23 @@ int main() {
             continue; // Empty command
         }
 
+        // Exit command
         else if (strcmp(argv[0], "exit") == 0) {
             printf("goodbye\n");
             exit(0);
-        } 
+        }
 
         // cd command
         else if (strcmp(argv[0], "cd") == 0) {
             if (argv[1] == NULL) {
                 printf("cd: missing argument\n");
             } else {
-                // Attempt to change the directory
                 if (chdir(argv[1]) != 0) {
-                    perror("cd"); // 출력: 디렉토리 변경 실패 시 에러 메시지
+                    perror("cd");
                 }
             }
         }
+
         // pwd command
         else if (strcmp(argv[0], "pwd") == 0) {
             if (getcwd(input, MAX_LINE) != NULL) {
@@ -57,14 +66,24 @@ int main() {
             } else {
                 perror("pwd");
             }
-        } 
-        
+        }
+
         // ls command
         else if (strcmp(argv[0], "ls") == 0) {
-            printf("execute ls\n");
             my_ls();
-        } 
-        
+        }
+
+        // cat command
+        else if (strcmp(argv[0], "cat") == 0) {
+            if (argv[1] == NULL) {
+                fprintf(stderr, "cat: missing filename\n");
+            } else {
+                for (int j = 1; argv[j] != NULL; j++) {
+                    my_cat(argv[j]); // cat 명령어 함수 호출
+                }
+            }
+        }
+
         // Unrecognized command
         else {
             if (access(argv[0], F_OK) == 0) {
