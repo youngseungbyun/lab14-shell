@@ -82,6 +82,7 @@ int main() {
                     my_cat(argv[j]); // cat 명령어 함수 호출
                 }
             }
+            printf("\n");
         }
 
         // Unrecognized command
